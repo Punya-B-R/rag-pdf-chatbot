@@ -8,8 +8,26 @@ from google.generativeai import configure
 from utils.file_utils import save_uploaded_file
 from utils.text_utils import chunk_text
 from chromadb.utils import embedding_functions
+import shutil
+from pathlib import Path
 import atexit
 
+def cleanup_uploads():
+    """Delete only the contents of uploads/ without removing the folder"""
+    uploads_dir = Path("uploads")
+    try:
+        # Delete all files and subdirectories inside uploads/
+        for item in uploads_dir.glob("*"):
+            if item.is_file():
+                item.unlink()  # Delete file
+            elif item.is_dir():
+                shutil.rmtree(item)  # Delete subdirectory
+        print("✓ Cleared uploads contents (folder kept)")
+    except Exception as e:
+        print(f"⚠️ Cleanup warning: {str(e)}")
+
+# Register cleanup
+atexit.register(cleanup_uploads)
 # Load environment variables
 load_dotenv()
 
@@ -150,14 +168,5 @@ def main():
             st.error(f"Error: {str(e)}")
             st.stop()
 
-
-#----------------------------
-def cleanup():
-    chroma_client = chromadb.PersistentClient(path="chroma_db")
-    for collection_name in chroma_client.list_collections():
-        chroma_client.delete_collection(name=collection_name.name)
-    print("✅ Cleared ChromaDB on exit!")
-
-atexit.register(cleanup)
 if __name__ == "__main__":
     main()
