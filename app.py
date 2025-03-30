@@ -134,7 +134,7 @@ def main():
                         Include key terms and concepts the document would contain:"""
                         
                         hyde_response = model.generate_content(hyde_prompt)
-                        hyde_answer = hyde_response.text if hasattr(hyde_response, 'text') else prompt  # Fallback
+                        hyde_answer = hyde_response.text if hasattr(hyde_response, 'text') else prompt  # Fallback if no HyDE response
                         
                         # 3. Retrieve Relevant Chunks
                         data = st.session_state.processed_data
@@ -146,12 +146,23 @@ def main():
                         
                         # 4. Generate Context-Aware Response
                         context = "\n\n---\n\n".join(results["documents"][0])
+                        
+                        # Updated Enhanced Prompt for Descriptive Answers
                         enhanced_prompt = f"""Answer this question based ONLY on the following context:
                         Question: {prompt}
                         Context: {context}
-                        - Be precise and concise
-                        - Say "I don't know" if unsure
-                        - Never hallucinate information:"""
+                        
+                        Instructions:
+                        - Provide a concise and direct answer first.
+                        - Follow the direct answer with a detailed explanation using relevant information from the context.
+                        - Mention supporting facts or key concepts to justify the response.
+                        - Say "I don't know" if the context does not provide enough information.
+                        - Never hallucinate information.
+
+                        Format:
+                        - Key Insight: [Concise Answer]
+                        - Additional Insights: [Detailed Explanation]
+                        """
                         
                         response = model.generate_content(enhanced_prompt)
                         response_text = response.text if hasattr(response, 'text') else "Sorry, I couldn't generate a response."
