@@ -1,4 +1,5 @@
 import os
+import time  # Make sure to import time for delays
 import streamlit as st
 import chromadb
 import pdfplumber
@@ -22,7 +23,7 @@ def cleanup_uploads():
                 item.unlink()  # Delete file
             elif item.is_dir():
                 shutil.rmtree(item)  # Delete subdirectory
-        print("✓ Cleared uploads contents (folder kept)")
+        print("✓ Cleared uploads contents")
     except Exception as e:
         print(f"⚠️ Cleanup warning: {str(e)}")
 
@@ -57,7 +58,7 @@ def main():
     if uploaded_file:
         try:
             if "processed_data" not in st.session_state or st.session_state.processed_data["pdf_name"] != uploaded_file.name:
-                with st.status("Processing PDF...", expanded=True) as status:
+                with st.spinner("Processing PDF..."):
                     # Save and extract text
                     pdf_path = save_uploaded_file(uploaded_file)
                     text = ""
@@ -67,7 +68,7 @@ def main():
                     
                     # Chunk text
                     chunks = chunk_text(text)
-                    status.write(f"✓ Split into {len(chunks)} chunks")
+                    st.info(f"✓ Split into {len(chunks)} chunks")
                     
                     # Generate embeddings
                     embeddings = []
@@ -103,7 +104,7 @@ def main():
                         "collection": collection,
                         "pdf_name": uploaded_file.name
                     }
-                    status.update(label="PDF ready!", state="complete", expanded=False)
+                    st.success("PDF ready!")
             else:
                 st.success("✓ Using previously processed PDF")
 
@@ -126,7 +127,7 @@ def main():
                 try:
                     with st.spinner("Analyzing..."):
                         # 1. Initialize the GenerativeModel
-                        model = genai.GenerativeModel('gemini-2.0-flash')
+                        model = genai.GenerativeModel('gemini-1.5-flash')
                         
                         # 2. Generate Hypothetical Answer (HyDE)
                         hyde_prompt = f"""Generate a comprehensive hypothetical answer that might exist in the document for:
@@ -147,7 +148,7 @@ def main():
                         # 4. Generate Context-Aware Response
                         context = "\n\n---\n\n".join(results["documents"][0])
                         
-                        # Updated Enhanced Prompt for Descriptive Answers
+                        # Enhanced prompt for descriptive answers
                         enhanced_prompt = f"""Answer this question based ONLY on the following context:
                         Question: {prompt}
                         Context: {context}
@@ -164,16 +165,25 @@ def main():
                         - Additional Insights: [Detailed Explanation]
                         """
                         
+                        # For demonstration, we simulate streaming by splitting the final response.
+                        # Replace this block with the actual streaming API if available.
                         response = model.generate_content(enhanced_prompt)
-                        response_text = response.text if hasattr(response, 'text') else "Sorry, I couldn't generate a response."
-
+                        full_response = response.text if hasattr(response, 'text') else "Sorry, I couldn't generate a response."
+                        
                 except Exception as e:
-                    response_text = f"Error processing query: {str(e)}"
+                    full_response = f"Error processing query: {str(e)}"
                 
-                # Display assistant response
+                # Display assistant response using simulated streaming
                 with st.chat_message("assistant"):
-                    st.markdown(response_text)
-                st.session_state.messages.append({"role": "assistant", "content": response_text})
+                    placeholder = st.empty()
+                    streamed_text = ""
+                    # Split the full response into words (you could also split by characters or use another strategy)
+                    for token in full_response.split(" "):
+                        streamed_text += token + " "
+                        placeholder.markdown(streamed_text)
+                        time.sleep(0.1)  # Adjust delay as needed
+
+                st.session_state.messages.append({"role": "assistant", "content": full_response})
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
