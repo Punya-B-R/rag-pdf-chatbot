@@ -28,9 +28,3 @@ This project is a RAG (Retrieval-Augmented Generation) system that transforms PD
 - **Auto-Cleanup:** Manages temporary files using `atexit` for automatic cleanup.
 
 
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/your_username/rag-pdf-chatbot.git
-   cd rag-pdf-chatbot
