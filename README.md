@@ -1,33 +1,36 @@
 # RAG PDF Chatbot
 
-This project is a RAG (Retrieval-Augmented Generation) system that transforms PDFs into queryable knowledge sources. By combining Google's latest Gemini embeddings with efficient vector search, it delivers accurate, context-grounded answers from your documents.
+## Overview
 
-## 1. Document Processing Pipeline
+This project implements a PDF chatbot that allows users to interact with the content of their PDF documents using a conversational interface.
 
-- **PDF Text Extraction:** Uses pdfplumber for layout-aware text parsing.
-- **Semantic Chunking:** Employs Langchain's RecursiveCharacterTextSplitter to split text into 1000-character chunks with a 200-character overlap.
-- **HyDE Optimization:** Generates hypothetical answers to improve retrieval accuracy.
+## Key Features
 
-## 2. Vector Search Engine
+- **PDF Upload & Processing**  
+  Upload PDFs through a simple Streamlit interface. The uploaded PDF is processed to extract text, which is then split into semantically meaningful chunks.
 
-- **Gemini Embeddings:** Creates 768-dimension vectors using the `models/embedding-001`.
-- **ChromaDB Indexing:** Provides persistent storage with cosine similarity search.
-- **Contextual Retrieval:** Retrieves the top-3 most relevant text chunks per query.
+- **Semantic Text Chunking**  
+  Utilizes Langchain's `RecursiveCharacterTextSplitter` to divide text into manageable pieces while preserving semantic context.
 
-## 3. Generative Q&A
+- **Embedding Generation & Storage**  
+  Uses Google Generative AI to generate embeddings for each text chunk. These embeddings are stored in ChromaDB for efficient retrieval.
 
-- **Gemini-1.5-Flash:** Generates answers that are constrained to the retrieved context.
-- **Two-Phase Prompting:**
-  - *Retrieval-focused Query Rewriting:* Enhances query relevance.
-  - *Context-aware Response Generation:* Produces detailed responses with citation prompts.
+- **Conversational Query Interface**  
+  A chat-based UI built with Streamlit enables users to ask questions about the PDF content. The application retrieves relevant information and generates context-aware responses.
 
-## 4. Streamlit Interface
+- **Retrieval Augmented Generation (RAG)**  
+  The system retrieves the most contextually relevant text chunks from the document and then leverages generative AI to produce precise, context-aware responses. HyDE Optimization further refines this process by generating hypothetical answers that guide the retrieval phase, ensuring that the best possible context is used for the final output.
 
-- **Session State:** Maintains chat history and caches processed documents.
-- **Streaming Responses:** Simulated token-by-token output for a dynamic user experience.
-- **Auto-Cleanup:** Manages temporary files using `atexit` for automatic cleanup.
+## Dependencies
 
-## 🛠️ Local Setup Guide
+- **Streamlit** – For the web-based chat interface.
+- **PDFPlumber** – To extract text from PDF documents.
+- **ChromaDB** – For embedding storage and fast retrieval.
+- **Google Generative AI (google-generativeai)** – To generate embeddings and conversational responses.
+- **Python-Dotenv** – To load environment variables.
+- **Langchain** – For semantic text splitting.
+
+## Local Setup Guide
 ### 1. **Install Python 3.9+**  
    Download from [python.org](https://www.python.org/downloads/) then verify:
    ```bash
