@@ -27,4 +27,41 @@ This project is a RAG (Retrieval-Augmented Generation) system that transforms PD
 - **Streaming Responses:** Simulated token-by-token output for a dynamic user experience.
 - **Auto-Cleanup:** Manages temporary files using `atexit` for automatic cleanup.
 
+## 🛠️ Local Setup Guide
+### 1. **Install Python 3.9+**  
+   Download from [python.org](https://www.python.org/downloads/) then verify:
+   ```bash
+   python --version
+   ```
+
+### 2. Clone the Repository
+   ```bash
+   git clone <repository-url>
+   cd <repository-folder-name>
+   ```
+
+### 3. Set Up Virtual Environment
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate # Windows
+   source venv/bin/activate # macOS/Linux
+   ```
+
+### 4. Install Dependencies
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+### 5. Configure API Key 
+   - Get key from [Google AI Studio](https://aistudio.google.com/app/apikey)  
+   - Add to `.env`:
+     ```text
+     GEMINI_API_KEY="YOUR_API_KEY"  # Paste your key here
+     ```
+     
+### 6. Run the Application
+   ```bash
+   streamlit run app.py
+   ```
+   The application will start running at http://localhost:8501.
 
