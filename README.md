@@ -55,7 +55,8 @@ This project implements a PDF chatbot that allows users to interact with the con
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
-### 5. Configure API Key 
+### 5. Configure API Key
+   - In project root, create a new file named `.env`
    - Get key from [Google AI Studio](https://aistudio.google.com/app/apikey)  
    - Add to `.env`:
      ```text
